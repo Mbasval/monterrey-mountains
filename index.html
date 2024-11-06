@@ -18,61 +18,62 @@
 <body>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
   <script>
-    let peaks = [];
-    let mountainBase;
+    let terrain = [];
+    let angle = 0;
 
     function setup() {
       createCanvas(windowWidth, windowHeight, WEBGL);
-      mountainBase = createBase();
-      peaks = createMountain();
+      createTerrain();
     }
 
     function draw() {
       background(0);
+
+      // Rotate the terrain to give it a dynamic look
       rotateX(PI / 4);
-      rotateZ(PI / 8);
-      translate(0, -100, -500); // Move the mountain up
+      rotateZ(angle);
 
-      drawMountain();
+      // Translate to center the terrain
+      translate(0, -100, -300);
+
+      // Render the low-poly mountain terrain
+      drawTerrain();
+
+      // Update angle for dynamic rotation
+      angle += 0.002;
     }
 
-    function createBase() {
-      let base = [];
-      for (let x = -width / 2; x < width / 2; x += 10) {
-        base.push(createVector(x, height / 4, 0));
-      }
-      return base;
+    function createTerrain() {
+      // Base shape representing the angular nature of the mountain
+      let baseHeight = 150;
+      let peakHeight = 250;
+      let width = 500;
+
+      // Add flat polygons (faces) to represent different facets of the mountain
+      terrain.push(createFlatFace(width, baseHeight, peakHeight, -width / 3, -width / 3));
+      terrain.push(createFlatFace(width, baseHeight, peakHeight, width / 3, -width / 3));
+      terrain.push(createFlatFace(width, baseHeight, peakHeight, -width / 3, width / 3));
+      terrain.push(createFlatFace(width, baseHeight, peakHeight, width / 3, width / 3));
     }
 
-    function createMountain() {
-      let peakHeight = height / 2;
-      let peakWidth = width / 6;
-      let peaks = [];
-      for (let i = 0; i < 10; i++) {
-        let x = map(i, 0, 9, -peakWidth, peakWidth);
-        let y = map(i, 0, 9, peakHeight, peakHeight * 0.5);
-        let z = map(i, 0, 9, -100, 100);
-        peaks.push(createVector(x, y, z));
-      }
-      return peaks;
+    function createFlatFace(width, baseHeight, peakHeight, offsetX, offsetY) {
+      let face = [];
+      face.push(createVector(offsetX, baseHeight, offsetY));
+      face.push(createVector(offsetX + width / 2, peakHeight, offsetY - width / 2));
+      face.push(createVector(offsetX + width, baseHeight, offsetY));
+      return face;
     }
 
-    function drawMountain() {
-      fill(95, 63, 34); // Brownish color for the base
-      stroke(200);
-      beginShape();
-      for (let v of mountainBase) {
-        vertex(v.x, v.y, v.z);
+    function drawTerrain() {
+      for (let face of terrain) {
+        beginShape();
+        fill(100, 200, 100); // Light green for flat polygon faces
+        stroke(255);
+        for (let v of face) {
+          vertex(v.x, v.y, v.z);
+        }
+        endShape(CLOSE);
       }
-      endShape(CLOSE);
-
-      fill(50, 100, 50); // Green for the mountain peaks
-      stroke(255);
-      beginShape();
-      for (let v of peaks) {
-        vertex(v.x, v.y, v.z);
-      }
-      endShape(CLOSE);
     }
 
     function windowResized() {
