@@ -19,41 +19,37 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
   <script>
     let terrain = [];
-    let angle = 0;
-
+    
     function setup() {
       createCanvas(windowWidth, windowHeight, WEBGL);
+      noLoop();
       createTerrain();
     }
 
     function draw() {
       background(0);
 
-      // Rotate the terrain to give it a dynamic look
-      rotateX(PI / 4);
-      rotateZ(angle);
-
-      // Translate to center the terrain
-      translate(0, -100, -300);
+      // Rotate and translate to frame the scene
+      rotateX(PI / 3); // Looking from above
+      translate(0, -100, -400); // Center the mountain
 
       // Render the low-poly mountain terrain
       drawTerrain();
-
-      // Update angle for dynamic rotation
-      angle += 0.002;
     }
 
     function createTerrain() {
-      // Base shape representing the angular nature of the mountain
+      // Define the shape of Cerro de la Silla
       let baseHeight = 150;
       let peakHeight = 250;
       let width = 500;
-
-      // Add flat polygons (faces) to represent different facets of the mountain
-      terrain.push(createFlatFace(width, baseHeight, peakHeight, -width / 3, -width / 3));
-      terrain.push(createFlatFace(width, baseHeight, peakHeight, width / 3, -width / 3));
-      terrain.push(createFlatFace(width, baseHeight, peakHeight, -width / 3, width / 3));
-      terrain.push(createFlatFace(width, baseHeight, peakHeight, width / 3, width / 3));
+      
+      // A simplified, angular version of Cerro de la Silla
+      terrain.push(createFlatFace(width, baseHeight, peakHeight, -width / 3, -width / 3)); // Left peak
+      terrain.push(createFlatFace(width, baseHeight, peakHeight, 0, -width / 3)); // Middle peak
+      terrain.push(createFlatFace(width, baseHeight, peakHeight, width / 3, -width / 3)); // Right peak
+      terrain.push(createFlatFace(width, baseHeight, peakHeight, -width / 3, width / 3)); // Left lower slope
+      terrain.push(createFlatFace(width, baseHeight, peakHeight, 0, width / 3)); // Middle lower slope
+      terrain.push(createFlatFace(width, baseHeight, peakHeight, width / 3, width / 3)); // Right lower slope
     }
 
     function createFlatFace(width, baseHeight, peakHeight, offsetX, offsetY) {
@@ -65,10 +61,11 @@
     }
 
     function drawTerrain() {
+      // Draw all the terrain faces
       for (let face of terrain) {
         beginShape();
-        fill(100, 200, 100); // Light green for flat polygon faces
-        stroke(255);
+        fill(100, 200, 100); // Light green color for the terrain
+        stroke(200);
         for (let v of face) {
           vertex(v.x, v.y, v.z);
         }
